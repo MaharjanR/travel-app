@@ -1,3 +1,5 @@
+import "./style/style.scss";
+
 // targeting all the elements being used
 const zipCode = document.querySelector("#zip");
 const feelings = document.querySelector("#feeling");
