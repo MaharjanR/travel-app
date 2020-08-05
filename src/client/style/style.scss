@@ -22,17 +22,30 @@ body {
     margin: 0 auto;
 }
 
-.btn:hover {
-    color: #fff;
-    background: #333;
+img {
+    width: 100%;
+}
+
+input {
+    cursor: pointer;
+}
+button {
+    cursor: pointer;
+
+    &:hover {
+        color: #fff;
+        background: #333;
+    }
 }
 
 /* Form */
 
-form {
-    text-align: start;
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
-
 .form-control {
     padding: 0.5rem;
     margin: 0.5rem 0;
@@ -59,12 +72,45 @@ form {
     padding: 0.5rem 1rem;
 }
 
-/* Entryholder */
+.errors {
+    color: red;
+}
 
-#entry-holder {
-    font-family: sans-serif;
-    margin-top: 4rem;
-    text-align: start;
-    justify-items: center;
-    display: flex;
+// Travel result
+
+.travel-result {
+    .travel-container {
+        display: flex;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .img-container {
+        width: 50%;
+        padding: 1rem;
+    }
+
+    .info {
+        padding: 1rem;
+        margin: 0.5rem;
+        text-align: start;
+    }
+}
+
+// Changin the text size in below 600px
+
+@media (max-width: 600px) {
+    body {
+        font-size: 0.75rem;
+    }
+}
+
+// Changin the text size in below 450px
+
+@media (max-width: 450px) {
+    .travel-result {
+        .info {
+            font-size: 0.5rem;
+        }
+    }
 }

@@ -13,27 +13,52 @@
         </header>
 
         <main>
-            <div class="container">
-                <form>
-                    <div class="form-control">
-                        <label>Enter your destination:</label>
-                        <input type="text" id="destination" class="desination" />
+            <form>
+                <div class="container" id="container">
+                    <div class="form-container">
+                        <div class="form-control">
+                            <label>Enter your destination:</label>
+                            <input
+                                type="text"
+                                id="destination"
+                                class="desination"
+                            />
+                        </div>
+                        <div class="form-control">
+                            <label>Select your arrival date:</label>
+                            <input
+                                type="date"
+                                id="start-date"
+                                name="start-date"
+                            />
+                        </div>
+                        <div class="form-control">
+                            <label>Select your end date:</label>
+                            <input type="date" id="end-date" name="end-date" />
+                        </div>
+                        <button
+                            type="submit"
+                            id="generate"
+                            class="btn btn-generate"
+                            onclick="return Client.generate(event)"
+                        >
+                            Generate
+                        </button>
                     </div>
-                    <div class="form-control">
-                        <label>Select your arrival date:</label>
-                        <input type="date" id="start-date" name="start-date" />
-                    </div>
-                    <button
-                        type="submit"
-                        id="generate"
-                        class="btn btn-generate"
-                        onclick="return Client.generate(event)"
-                    >
-                        Generate
-                    </button>
-                </form>
-                <div id="travel-container">
+                    <div class="errors" id="errors"></div>
                 </div>
+            </form>
+            <div id="travel-result" class="travel-result"></div>
         </main>
+
+        <script>
+            // Check that service workers are supported
+            if ("serviceWorker" in navigator) {
+                // Use the window load event to keep the page load performant
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("/service-worker.js");
+                });
+            }
+        </script>
     </body>
 </html>

@@ -17,6 +17,7 @@ let projectData = {
     cityName: "",
     timezone: "",
     img: "",
+    lengthOfTrip: "",
 };
 
 /* Middleware*/
@@ -33,64 +34,65 @@ app.get("/", (req, res) => {
 });
 
 // post route to save data in the projectData
-app.post("/travel", async (req, res) => {
-    projectData = {
-        minTemp: 18.9,
-        maxTemp: 25.8,
-        temp: 20.7,
-        minFeelsLike: 20.2,
-        maxFeelsLike: 22.2,
-        countryCode: "NP",
-        cityName: "Kathmandu",
-        timezone: "Asia/Kathmandu",
-        img:
-            "https://pixabay.com/photos/people-portrait-man-kathmandu-5321914/",
-    };
-    // try {
-    //     const { date, destination } = req.body;
-    //     let weatherbit;
-    //     const geoLocation = await axios.get(
-    //         `http://api.geonames.org/searchJSON?q=${destination}&maxRows=1&username=${process.env.NAME}`
-    //     );
-    //     const { lat, lng } = geoLocation.data.geonames[0];
+app.post("/travel", async function (req, res) {
+    try {
+        // assigning the user inputs to its own variable
+        const { startDate, endDate, destination } = req.body;
+        let weatherbit;
+        // targeting the days of date to get the difference
+        const startDays = startDate.slice(8, 10);
+        const endDays = endDate.slice(8, 10);
+        const lengthOfTrip = endDays - startDays;
 
-    //     weatherbit = await axios.get(
-    //         `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${process.env.WEATHERBIT_API_KEY}`
-    //     );
+        // storing the difference in object
+        projectData.lengthOfTrip = lengthOfTrip;
 
-    //     const weatherData = weatherbit.data;
+        // calling the api to get the lattitude and longitude and storing it for later use
+        const geoLocation = await axios.get(
+            `http://api.geonames.org/searchJSON?q=${destination}&maxRows=1&username=${process.env.NAME}`
+        );
+        const { lat, lng } = geoLocation.data.geonames[0];
 
-    //     weatherData.data.forEach((val) => {
-    //         if ((val.valid_date = date)) {
-    //             projectData.minTemp = val.min_temp;
-    //             projectData.maxTemp = val.max_temp;
-    //             projectData.temp = val.temp;
-    //             projectData.minFeelsLike = val.app_min_temp;
-    //             projectData.maxFeelsLike = val.app_max_temp;
-    //         } else return;
-    //     });
+        // calling the api using lat and long to get the weather result of that area.
+        weatherbit = await axios.get(
+            `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${process.env.WEATHERBIT_API_KEY}`
+        );
 
-    //     projectData.countryCode = weatherData.country_code;
-    //     projectData.cityName = weatherData.city_name;
-    //     projectData.timezone = weatherData.timezone;
+        const weatherData = weatherbit.data;
 
-    //     pixabay = await axios.get(
-    //         `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${destination}&image_type=photo`
-    //     );
+        // storing the start date weather
+        weatherData.data.forEach((val) => {
+            if (val.valid_date == startDate) {
+                projectData.minTemp = val.min_temp;
+                projectData.maxTemp = val.max_temp;
+                projectData.temp = val.temp;
+                projectData.minFeelsLike = val.app_min_temp;
+                projectData.maxFeelsLike = val.app_max_temp;
+            } else return;
+        });
 
-    //     const { pageURL } = pixabay.data.hits[0];
+        // storing the place name and the timezone
+        projectData.countryCode = weatherData.country_code;
+        projectData.cityName = weatherData.city_name;
+        projectData.timezone = weatherData.timezone;
 
-    //     projectData.img = pageURL;
-    //     console.log("done");
-    res.end();
-    // } catch (e) {
-    //     console.log(e);
-    // }
+        // calling the api to get the picture of that area and storing it in the object
+        pixabay = await axios.get(
+            `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${destination}&image_type=photo`
+        );
+
+        const { webformatURL } = pixabay.data.hits[0];
+
+        projectData.img = webformatURL;
+        console.log("done");
+        res.end();
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 // get route, sends the projectdata object
 app.get("/travel", async (req, res) => {
-    console.log(projectData);
     await res.send(projectData);
 });
 
@@ -98,3 +100,5 @@ app.get("/travel", async (req, res) => {
 const port = 3000;
 
 app.listen(port, () => console.log(`Server running in ${port} port`));
+
+module.exports = app;
